@@ -1,0 +1,27 @@
+version: '3.7'
+services:
+  web:
+    build:
+      context: .
+    volumes:
+      -  .:/app
+    ports:
+      - "8000:8000"
+    expose:
+      - "8000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - rabbit
+  db:
+    image: postgres:12.0-alpine
+    container_name: postgresql
+    ports:
+      - "5432:5432"
+    expose:
+      - "5432"
+    volumes:
+      - /db/django_celery/:/var/lib/postgresql/data/
+    env_file:
+      - .env
