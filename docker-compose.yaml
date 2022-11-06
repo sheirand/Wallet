@@ -3,6 +3,10 @@ services:
   web:
     build:
       context: .
+    container_name: Wallet
+    command: sh -c """sleep 3 &&
+                      python manage.py runserver 0.0.0.0:8000"""
+
     volumes:
       -  .:/app
     ports:
@@ -13,7 +17,6 @@ services:
       - .env
     depends_on:
       - db
-      - rabbit
   db:
     image: postgres:12.0-alpine
     container_name: postgresql
@@ -22,6 +25,8 @@ services:
     expose:
       - "5432"
     volumes:
-      - /db/django_celery/:/var/lib/postgresql/data/
+      - /db/wallet/:/var/lib/postgresql/wallet/data
     env_file:
       - .env
+volumes:
+  postgres_data:
