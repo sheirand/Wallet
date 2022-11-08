@@ -1,3 +1,10 @@
-from django.shortcuts import render
+from rest_framework import viewsets
+from wallet.models import Transaction
+from wallet.serializers import TransactionSerializer
 
-# Create your views here.
+
+class TransactionAPIViewset(viewsets.ModelViewSet):
+    queryset = Transaction.objects.all()
+    serializer_class = TransactionSerializer
+
+

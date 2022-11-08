@@ -24,7 +24,7 @@ services:
     expose:
       - "5432"
     volumes:
-      - /db/wallet/:/var/lib/postgresql/wallet/data
+      - /data/postgres:/app/data
     env_file:
       - .env
 volumes:
