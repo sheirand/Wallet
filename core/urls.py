@@ -15,6 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from drf_yasg import openapi
+from drf_yasg.views import get_schema_view
+from rest_framework import permissions
 from rest_framework.routers import DefaultRouter
 from wallet.views import TransactionAPIViewset
 from user.views import UserApiViewset, UserLoginViewset
@@ -23,8 +26,22 @@ router = DefaultRouter()
 router.register('trans', TransactionAPIViewset, basename='trans')
 router.register('user', UserApiViewset)
 
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Wallet API",
+        default_version='v1',
+        description="Application made for tracking your transactions",
+        contact=openapi.Contact(email="eugene.osakovich@gmail.com"),
+        license=openapi.License(name="License"),
+    ),
+    public=True,
+    permission_classes=[permissions.AllowAny],
+)
+
 urlpatterns = [
     path('login/', UserLoginViewset.as_view({"post": "create"})),
+    path('schema/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-wallet-api'),
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
 ]
