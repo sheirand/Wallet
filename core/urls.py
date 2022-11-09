@@ -17,13 +17,14 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from wallet.views import TransactionAPIViewset
-from user.views import UserApiViewset
+from user.views import UserApiViewset, UserLoginViewset
 
 router = DefaultRouter()
 router.register('trans', TransactionAPIViewset, basename='trans')
 router.register('user', UserApiViewset)
 
 urlpatterns = [
+    path('login/', UserLoginViewset.as_view({"post": "create"})),
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
 ]
