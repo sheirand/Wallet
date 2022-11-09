@@ -1,8 +1,12 @@
 import datetime
+from django.contrib.auth.models import AnonymousUser
 from rest_framework import exceptions
 from user.models import User
 from django.conf import settings
 import jwt
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class AuthenticationService:
@@ -10,7 +14,7 @@ class AuthenticationService:
     @staticmethod
     def authenticate(email: str, password: str) -> "User":
 
-        user = User.objects.get(email=email)
+        user = User.objects.filter(email=email).first()
 
         if not user:
             raise exceptions.AuthenticationFailed("Invalid Credentials")
@@ -30,3 +34,27 @@ class AuthenticationService:
         token = jwt.encode(payload, settings.JWT_SECRET_KEY, algorithm="HS256")
 
         return token
+
+    @staticmethod
+    def get_jwt_user(request) -> "User":
+        """Service for get user by jwt in request headers"""
+
+        token = request.headers.get('Authorization', None)
+        user_jwt = AnonymousUser()
+
+        if token is not None:
+            try:
+                user_jwt = jwt.decode(
+                    token,
+                    settings.JWT_SECRET_KEY,
+                    algorithms=['HS256']
+                )
+                user_jwt = User.objects.get(
+                    id=user_jwt['id']
+                )
+
+            except (jwt.ExpiredSignatureError, jwt.DecodeError, jwt.InvalidTokenError) as error:
+                logger.error(f"JWT error message: {error}")
+                raise exceptions.AuthenticationFailed(error)
+
+        return user_jwt
