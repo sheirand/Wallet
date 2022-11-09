@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 from django.forms import ModelForm
 
-from user.models import User, Category
+from user.models import User, Categories
 
 
 class UserCreationForm(ModelForm):
@@ -40,5 +40,5 @@ class CustomUserAdmin(UserAdmin):
 
 
 admin.site.register(User, CustomUserAdmin)
-admin.site.register(Category)
+admin.site.register(Categories)
 admin.site.unregister(Group)
