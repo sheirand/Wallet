@@ -4,6 +4,17 @@ from django.db import models
 from user.managers import CustomUserManager
 
 
+class Category(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+
+    class Meta:
+        verbose_name = "Category"
+        verbose_name_plural = "Categories"
+
+    def __str__(self):
+        return self.name
+
+
 class User(AbstractUser):
     username = None
     first_name = None
@@ -12,6 +23,7 @@ class User(AbstractUser):
     balance = models.DecimalField(verbose_name="Balance USD", max_digits=15,
                                   decimal_places=2, default=0.00, blank=True, null=True)
     birthdate = models.DateField(verbose_name="Date of birth", blank=True, null=True)
+    categories = models.ManyToManyField(Category, blank=True)
 
     objects = CustomUserManager()
 
