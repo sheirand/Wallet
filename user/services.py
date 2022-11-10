@@ -1,4 +1,6 @@
 import datetime
+
+from django.contrib.auth.middleware import get_user
 from django.contrib.auth.models import AnonymousUser
 from rest_framework import exceptions
 from user.models import User
@@ -7,6 +9,20 @@ import jwt
 import logging
 
 logger = logging.getLogger(__name__)
+
+DEFAULT_CATEGORIES = [
+    "Забота о себе",
+    "Зарплата",
+    "Здоровье и фитнес",
+    "Кафе и рестораны",
+    "Машина",
+    "Образование",
+    "Отдых и развлечения",
+    "Платежи, комиссии",
+    "Покупки: одежда, техника",
+    "Продукты",
+    "Проезд"
+]
 
 
 class AuthenticationService:
@@ -38,7 +54,9 @@ class AuthenticationService:
     @staticmethod
     def get_jwt_user(request) -> "User":
         """Service for get user by jwt in request headers"""
-
+        user_jwt = get_user(request)
+        if user_jwt.is_authenticated:
+            return user_jwt
         token = request.headers.get('Authorization', None)
         user_jwt = AnonymousUser()
 

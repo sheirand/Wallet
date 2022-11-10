@@ -27,7 +27,7 @@ class CustomUserAdmin(UserAdmin):
     list_filter = ("is_staff",)
     search_fields = ("email",)
     fieldsets = (
-        (None, {'fields': ('email', 'password', 'balance', 'birthdate', 'categories')}),
+        (None, {'fields': ('email', 'password', 'balance', 'categories')}),
     )
     add_fieldsets = (
         (None, {
