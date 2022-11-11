@@ -1,11 +1,48 @@
 from rest_framework import serializers
-from user.models import User
-from user.services import AuthenticationService
+from user.models import User, Categories
+from user.services import AuthenticationService, DEFAULT_CATEGORIES
+from rest_framework.validators import UniqueValidator
+
 
 class UserSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(
+        required=True,
+        validators=[
+            UniqueValidator(
+                queryset=User.objects.all(),
+                message="User with this email already exists"
+            )
+        ]
+    )
+    password = serializers.CharField(max_length=32, write_only=True, required=True)
+    balance = serializers.DecimalField(max_digits=15, decimal_places=2, read_only=True)
+    categories = serializers.SlugRelatedField(many=True, slug_field='name', read_only=True)
+
     class Meta:
         model = User
-        fields = ('id', 'email', 'balance', 'birthdate', 'categories')
+        fields = ('id', 'email', 'password', 'balance', 'categories')
+
+    def create(self, validated_data):
+        validated_data['categories'] = []
+        for category in DEFAULT_CATEGORIES:
+            category = Categories.objects.get_or_create(name=category)[0]
+            validated_data['categories'].append(category.id)
+        return super().create(validated_data)
+
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(read_only=True)
+    balance = serializers.DecimalField(max_digits=15, decimal_places=2, read_only=True)
+    categories = serializers.SlugRelatedField(many=True, slug_field='name', queryset=Categories.objects.all())
+
+    class Meta:
+        model = User
+        fields = ("email", "balance", "categories")
+
+    def to_internal_value(self, data):
+        for cat in data.get('categories', []):
+            Categories.objects.get_or_create(name=cat)
+        return super().to_internal_value(data)
 
 
 class LoginSerializer(serializers.ModelSerializer):
@@ -31,3 +68,12 @@ class LoginSerializer(serializers.ModelSerializer):
         user = validated_data.get("user")
         token = AuthenticationService.create_jwt_token(user_id=user.id, user_email=user.email)
         return {"token": token}
+
+
+class ChangePwSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(read_only=True)
+    password = serializers.CharField(max_length=32, write_only=True, required=True)
+
+    class Meta:
+        model = User
+        fields = ("email", "password")

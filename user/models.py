@@ -1,6 +1,5 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-
 from user.managers import CustomUserManager
 
 
@@ -22,7 +21,6 @@ class User(AbstractUser):
     email = models.EmailField(verbose_name="email", max_length=150, unique=True)
     balance = models.DecimalField(verbose_name="Balance USD", max_digits=15,
                                   decimal_places=2, default=0.00, blank=True, null=True)
-    birthdate = models.DateField(verbose_name="Date of birth", blank=True, null=True)
     categories = models.ManyToManyField(Categories, blank=True)
 
     objects = CustomUserManager()
