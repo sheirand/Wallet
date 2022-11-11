@@ -68,3 +68,12 @@ class LoginSerializer(serializers.ModelSerializer):
         user = validated_data.get("user")
         token = AuthenticationService.create_jwt_token(user_id=user.id, user_email=user.email)
         return {"token": token}
+
+
+class ChangePwSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(read_only=True)
+    password = serializers.CharField(max_length=32, write_only=True, required=True)
+
+    class Meta:
+        model = User
+        fields = ("email", "password")
