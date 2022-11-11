@@ -30,13 +30,19 @@ class UserSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 
-class RegistrationSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(write_only=True, required=True)
-    password = serializers.CharField(max_length=32, write_only=True, required=True)
+class UserDetailSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(read_only=True)
+    balance = serializers.DecimalField(max_digits=15, decimal_places=2, read_only=True)
+    categories = serializers.SlugRelatedField(many=True, slug_field='name', queryset=Categories.objects.all())
 
     class Meta:
         model = User
-        fields = ("email", "password")
+        fields = ("email", "balance", "categories")
+
+    def to_internal_value(self, data):
+        for cat in data.get('categories', []):
+            Categories.objects.get_or_create(name=cat)
+        return super().to_internal_value(data)
 
 
 class LoginSerializer(serializers.ModelSerializer):

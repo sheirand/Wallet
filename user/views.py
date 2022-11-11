@@ -1,12 +1,17 @@
 from rest_framework import viewsets, mixins, permissions
 from user.models import User
 from user.permissions import IsOwnerOrAdmin
-from user.serializers import UserSerializer, LoginSerializer, RegistrationSerializer
+from user.serializers import UserSerializer, LoginSerializer, UserDetailSerializer
 
 
 class UserApiViewset(viewsets.ModelViewSet):
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+
+    def get_serializer_class(self):
+        if self.action in ("list", "create"):
+            return UserSerializer
+        else:
+            return UserDetailSerializer
 
     def get_permissions(self):
         if self.action == 'list':
