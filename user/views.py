@@ -43,5 +43,7 @@ class UserApiViewset(viewsets.ModelViewSet):
 
 class UserLoginViewset(mixins.CreateModelMixin,
                        viewsets.GenericViewSet):
+
     queryset = User.objects.all()
     serializer_class = LoginSerializer
+    permission_classes = (permissions.AllowAny,)

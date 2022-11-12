@@ -138,10 +138,19 @@ AUTH_USER_MODEL = "user.User"
 SWAGGER_SETTINGS = {
     'USE_SESSION_AUTH': False,
     'SECURITY_DEFINITIONS': {
-        'Bearer': {
+       'jwt-Auth': {
             'type': 'apiKey',
             'name': 'Authorization',
             'in': 'header'
-        }
+       }
     }
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'user.services.AuthenticationService',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
 }

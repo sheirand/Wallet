@@ -3,6 +3,8 @@ import datetime
 from django.contrib.auth.middleware import get_user
 from django.contrib.auth.models import AnonymousUser
 from rest_framework import exceptions
+from rest_framework.authentication import BaseAuthentication
+
 from user.models import User
 from django.conf import settings
 import jwt
@@ -25,10 +27,10 @@ DEFAULT_CATEGORIES = [
 ]
 
 
-class AuthenticationService:
+class AuthenticationService(BaseAuthentication):
 
     @staticmethod
-    def authenticate(email: str, password: str) -> "User":
+    def login_authenticate(email: str, password: str) -> "User":
 
         user = User.objects.filter(email=email).first()
 
@@ -39,7 +41,7 @@ class AuthenticationService:
         return user
 
     @staticmethod
-    def create_jwt_token(user_id: int, user_email: str) -> str:
+    def create_jwt(user_id: int, user_email: str) -> str:
         """Service for creating jwt"""
         payload = dict(
             id=user_id,
@@ -51,8 +53,7 @@ class AuthenticationService:
 
         return token
 
-    @staticmethod
-    def get_jwt_user(request) -> "User":
+    def authenticate(self, request):
         """Service for get user by jwt in request headers"""
         user_jwt = get_user(request)
         if user_jwt.is_authenticated:
@@ -75,4 +76,4 @@ class AuthenticationService:
                 logger.error(f"JWT error message: {error}")
                 raise exceptions.AuthenticationFailed(error)
 
-        return user_jwt
+        return user_jwt, None
