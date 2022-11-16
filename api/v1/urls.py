@@ -4,7 +4,7 @@ from wallet.views import TransactionAPIViewset
 from user.views import UserApiViewset, UserLoginViewset
 
 router = DefaultRouter()
-router.register('trans', TransactionAPIViewset, basename='trans')
+router.register('transaction', TransactionAPIViewset, basename='transaction')
 router.register('user', UserApiViewset)
 
 urlpatterns = [

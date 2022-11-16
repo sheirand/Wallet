@@ -1,6 +1,7 @@
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated, AllowAny
 
+from user.permissions import IsOwnerOrAdmin
 from user.models import User
 from wallet.models import Transaction
 from wallet.serializers import TransactionSerializer
@@ -8,7 +9,7 @@ from wallet.serializers import TransactionSerializer
 
 class TransactionAPIViewset(viewsets.ModelViewSet):
     serializer_class = TransactionSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, IsOwnerOrAdmin)
 
     def get_queryset(self):
         if self.request.user.is_staff:
