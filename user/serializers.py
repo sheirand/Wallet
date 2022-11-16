@@ -24,10 +24,14 @@ class UserSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data['categories'] = []
+        password = validated_data.pop('password')
         for category in DEFAULT_CATEGORIES:
             category = Categories.objects.get_or_create(name=category)[0]
             validated_data['categories'].append(category.id)
-        return super().create(validated_data)
+        user = super().create(validated_data)
+        user.set_password(raw_password=password)
+        user.save()
+        return user
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
@@ -58,7 +62,7 @@ class LoginSerializer(serializers.ModelSerializer):
         email = attrs.get("email")
         password = attrs.get("password")
 
-        user = AuthenticationService.authenticate(email=email, password=password)
+        user = AuthenticationService.creds_authenticate(email=email, password=password)
 
         attrs['user'] = user
 
@@ -66,7 +70,7 @@ class LoginSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = validated_data.get("user")
-        token = AuthenticationService.create_jwt_token(user_id=user.id, user_email=user.email)
+        token = AuthenticationService.create_jwt(user_id=user.id, user_email=user.email)
         return {"token": token}
 
 
