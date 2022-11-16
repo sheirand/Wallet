@@ -62,7 +62,7 @@ class LoginSerializer(serializers.ModelSerializer):
         email = attrs.get("email")
         password = attrs.get("password")
 
-        user = AuthenticationService.login_authenticate(email=email, password=password)
+        user = AuthenticationService.creds_authenticate(email=email, password=password)
 
         attrs['user'] = user
 

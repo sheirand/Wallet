@@ -30,7 +30,7 @@ DEFAULT_CATEGORIES = [
 class AuthenticationService(BaseAuthentication):
 
     @staticmethod
-    def login_authenticate(email: str, password: str) -> "User":
+    def creds_authenticate(email: str, password: str) -> "User":
 
         user = User.objects.filter(email=email).first()
 
@@ -54,6 +54,33 @@ class AuthenticationService(BaseAuthentication):
         return token
 
     def authenticate(self, request):
+        """Authentication service for REST_FRAMEWORK"""
+
+        user_jwt = get_user(request)
+        if user_jwt.is_authenticated:
+            return user_jwt, None
+        token = request.headers.get('Authorization', None)
+        user_jwt = AnonymousUser()
+
+        if token is not None:
+            try:
+                user_jwt = jwt.decode(
+                    token,
+                    settings.JWT_SECRET_KEY,
+                    algorithms=['HS256']
+                )
+                user_jwt = User.objects.get(
+                    id=user_jwt['id']
+                )
+
+            except (jwt.ExpiredSignatureError, jwt.DecodeError, jwt.InvalidTokenError) as error:
+                logger.error(f"JWT error message: {error}")
+                raise exceptions.AuthenticationFailed(error)
+
+        return user_jwt, None
+
+    @staticmethod
+    def get_jwt_user(request):
         """Service for get user by jwt in request headers"""
         user_jwt = get_user(request)
         if user_jwt.is_authenticated:
@@ -76,4 +103,4 @@ class AuthenticationService(BaseAuthentication):
                 logger.error(f"JWT error message: {error}")
                 raise exceptions.AuthenticationFailed(error)
 
-        return user_jwt, None
+        return user_jwt
