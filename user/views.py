@@ -1,11 +1,15 @@
+from django.db.models import Count, Sum
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, mixins, permissions, status
 from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from user.models import User
 from user.permissions import IsOwnerOrAdmin
-from user.serializers import UserSerializer, LoginSerializer, UserDetailSerializer, ChangePwSerializer
+from user.serializers import UserSerializer, LoginSerializer, UserDetailSerializer, ChangePwSerializer, \
+    UserStatsSerializer
+from wallet.models import Transaction
 
 
 class UserApiViewset(viewsets.ModelViewSet):
@@ -47,3 +51,15 @@ class UserLoginViewset(mixins.CreateModelMixin,
     queryset = User.objects.all()
     serializer_class = LoginSerializer
     permission_classes = (permissions.AllowAny,)
+
+
+class UserStats(mixins.ListModelMixin,
+                viewsets.GenericViewSet):
+    """Viewset for simple user-profile statistics"""
+    serializer_class = UserStatsSerializer
+    permission_classes = (IsAuthenticated,)
+
+    def get_queryset(self):
+        queryset = Transaction.objects.filter(user__id=self.request.user.id).\
+            values("category__name").annotate(count=Count("id"), sum=Sum("amount"))
+        return queryset
