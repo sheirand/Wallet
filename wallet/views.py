@@ -1,6 +1,6 @@
 from rest_framework import viewsets, filters
 from rest_framework.permissions import IsAuthenticated
-
+from django_filters.rest_framework import DjangoFilterBackend
 from user.permissions import IsOwnerOrAdmin
 from user.models import User
 from wallet.models import Transaction
@@ -10,9 +10,9 @@ from wallet.serializers import TransactionSerializer
 class TransactionAPIViewset(viewsets.ModelViewSet):
     serializer_class = TransactionSerializer
     permission_classes = (IsAuthenticated, IsOwnerOrAdmin)
-    filter_backends = (filters.SearchFilter, filters.OrderingFilter)
+    filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
     ordering_fields = ("time", "amount")
-    search_fields = ("time", "amount")
+    filterset_fields = ("time", "amount")
 
     def get_queryset(self):
         if self.request.user.is_staff:
