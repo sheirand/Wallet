@@ -3,6 +3,8 @@ from user.models import User, Categories
 from user.services import AuthenticationService, DEFAULT_CATEGORIES
 from rest_framework.validators import UniqueValidator
 
+from wallet.models import Transaction
+
 
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(
@@ -81,3 +83,9 @@ class ChangePwSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ("email", "password")
+
+
+class UserStatsSerializer(serializers.Serializer):
+    category = serializers.CharField(source="category__name")
+    count = serializers.IntegerField()
+    total = serializers.DecimalField(max_digits=15, decimal_places=2, source="sum", )
