@@ -33,12 +33,14 @@ def form_statistics():
     stats_dict = dict()
 
     # get expenses queryset
-    daily_expenses_qs = Transaction.objects.select_related("user").values("user__email", "user__balance").annotate(sum=Sum("amount")).\
+    daily_expenses_qs = Transaction.objects.select_related("user").\
+        values("user__email", "user__balance").annotate(sum=Sum("amount")).\
         filter(income=False, time__gte=day_before)
     for q in daily_expenses_qs:
         stats_dict[q['user__email']] = {"expenses": q["sum"], "income": 0, "balance": q["user__balance"]}
     # get incomes queryset
-    daily_income_qs = Transaction.objects.select_related("user").values("user__email", "user__balance").annotate(sum=Sum("amount")).\
+    daily_income_qs = Transaction.objects.select_related("user").\
+        values("user__email", "user__balance").annotate(sum=Sum("amount")).\
         filter(income=True, time__gte=day_before)
     # form the statistics dictionary from data for every previous-day-active user
     for q in daily_income_qs:
@@ -50,6 +52,7 @@ def form_statistics():
     for key, value in stats_dict.items():
         stats_dict[key]["total"] = stats_dict[key]["income"] - stats_dict[key]['expenses']
 
+    # form the individual email message and send to user's email
     for email, data in stats_dict.items():
 
         msg = f"""
