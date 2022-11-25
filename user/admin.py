@@ -22,7 +22,7 @@ class UserCreationForm(ModelForm):
 
 class CustomUserAdmin(UserAdmin):
     add_form = UserCreationForm
-    list_display = ("id", "email",)
+    list_display = ("id", "email", "is_staff")
     ordering = ("id", "email")
     list_filter = ("is_staff",)
     search_fields = ("email",)
