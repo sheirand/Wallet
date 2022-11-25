@@ -13,19 +13,20 @@ logger = get_task_logger(__name__)
 
 
 @app.task
-def send_email(email: str, msg: str):
+def send_notification(email: str, msg: str):
     """Daily Email notification for Wallet users"""
     send_mail(
         "Daily stats from Wallet App!",
         msg,
         settings.EMAIL_HOST_USER,
-        email,
+        (email,),
         fail_silently=False
     )
 
 
 @app.task
 def form_statistics():
+    """Simple stats collecting via DjangoORM"""
     # daily interval for collecting stats
     now = datetime.datetime.utcnow().replace(tzinfo=utc)
     day_before = now - datetime.timedelta(hours=24)
@@ -58,7 +59,7 @@ def form_statistics():
         msg = f"""
         Hi, {email}! We have collected
         some statistics for you!
-        {day_before.date()}
+        Date: {day_before.date()}
         ___________________
         Money spent: {data["expenses"]}
         Money earned: {data["income"]}
@@ -70,5 +71,4 @@ def form_statistics():
         Have a good day using Wallet App!        
         """
 
-        # send_email.delay(email, msg)
-        print(msg)
+        send_notification.delay(email, msg)

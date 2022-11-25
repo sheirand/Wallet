@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from wallet.models import Transaction, Organization
+from wallet.models import Transaction, Organization, Categories
 from user.models import User
 
 
@@ -8,6 +8,7 @@ class TransactionSerializer(serializers.ModelSerializer):
     amount = serializers.DecimalField(max_digits=15, decimal_places=2)
     user = serializers.SlugRelatedField(slug_field='email', read_only=True)
     organization = serializers.SlugRelatedField(slug_field="title", queryset=Organization.objects.all())
+    category = serializers.SlugRelatedField(slug_field="name", queryset=Categories.objects.all())
 
     class Meta:
         model = Transaction

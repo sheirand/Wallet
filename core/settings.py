@@ -163,6 +163,8 @@ REST_FRAMEWORK = {
 
 # Celery (+RabbitMQ)
 CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL")
+# uncomment to use rabbit result backend
+CELERY_RESULT_BACKEND = 'rpc://'
 
 # rabbitmq
 
@@ -170,3 +172,11 @@ RABBIT_CONNECTION = os.getenv("RABBITMQ_HOST")
 RABBIT_PORT = os.getenv("RABBITMQ_PORT")
 RABBIT_USER = os.getenv("RABBITMQ_DEFAULT_USER")
 RABBIT_PW = os.getenv("RABBITMQ_DEFAULT_PASS")
+
+# SMTP service config
+
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS")
+EMAIL_HOST = os.getenv("EMAIL_HOST")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = os.getenv("EMAIL_PORT")

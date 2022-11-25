@@ -39,10 +39,19 @@ services:
     expose:
       - "5672"
       - "15672"
-  celery:
+  celery_worker1:
     build:
       context: .
-    command: celery -A core worker -l info --loglevel=INFO
+    command: ./celeryworker1-entrypoint.sh
+    depends_on:
+      - db
+      - rabbit
+      - web
+    restart: on-failure
+  celery_worker2:
+    build:
+      context: .
+    command: ./celeryworker2-entrypoint.sh
     depends_on:
       - db
       - rabbit
@@ -56,6 +65,7 @@ services:
       - "5566:5566"
     command: celery -A core flower  --address=0.0.0.0 --port=5566
     depends_on:
-      - celery
+      - celery_worker1
+      - celery_worker2
 volumes:
   postgres_data:
