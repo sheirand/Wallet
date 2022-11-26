@@ -16,6 +16,8 @@ django-filter = "^22.1"
 celery = {extras = ["amqp"], version = "^5.2.7"}
 django-celery-beat = "^2.4.0"
 flower = "^1.2.0"
+pytest = "^7.2.0"
+pytest-django = "^4.5.2"
 
 [tool.poetry.dev-dependencies]
 
