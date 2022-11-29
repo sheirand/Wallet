@@ -1,7 +1,7 @@
 from rest_framework import viewsets, filters
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
-from user.permissions import IsOwnerOrAdmin
+from wallet.permissions import IsOwnerOrAdmin
 from user.models import User
 from wallet.models import Transaction
 from wallet.serializers import TransactionSerializer
