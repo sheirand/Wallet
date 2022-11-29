@@ -1,12 +1,12 @@
 import datetime
 
+from celery.utils.log import get_task_logger
 from django.conf import settings
 from django.core.mail import send_mail
 from django.db.models import Sum
 from pytz import utc
 
 from core.celery import app
-from celery.utils.log import get_task_logger
 from wallet.models import Transaction
 
 logger = get_task_logger(__name__)
@@ -38,7 +38,11 @@ def form_statistics():
         values("user__email", "user__balance").annotate(sum=Sum("amount")).\
         filter(income=False, time__gte=day_before)
     for q in daily_expenses_qs:
-        stats_dict[q['user__email']] = {"expenses": q["sum"], "income": 0, "balance": q["user__balance"]}
+        stats_dict[q['user__email']] = {
+            "expenses": q["sum"],
+            "income": 0,
+            "balance": q["user__balance"]
+        }
     # get incomes queryset
     daily_income_qs = Transaction.objects.select_related("user").\
         values("user__email", "user__balance").annotate(sum=Sum("amount")).\
@@ -49,7 +53,11 @@ def form_statistics():
             stats_dict[q["user__email"]]["income"] = q["sum"]
             stats_dict[q["user__email"]]["balance"] = q["user__balance"]
         else:
-            stats_dict[q["user__email"]] = {"expenses": 0, "income": q["sum"], "balance": q["user__balance"]}
+            stats_dict[q["user__email"]] = {
+                "expenses": 0,
+                "income": q["sum"],
+                "balance": q["user__balance"]
+            }
     for key, value in stats_dict.items():
         stats_dict[key]["total"] = stats_dict[key]["income"] - stats_dict[key]['expenses']
 
@@ -59,16 +67,16 @@ def form_statistics():
         msg = f"""
         Hi, {email}! We have collected
         some statistics for you!
+
         Date: {day_before.date()}
         ___________________
         Money spent: {data["expenses"]}
         Money earned: {data["income"]}
         Balance change: {data["total"]}
-        
+
         Current balance: {data["balance"]}
         ___________________
-        
-        Have a good day using Wallet App!        
-        """
 
+        Have a good day using Wallet App!
+        """
         send_notification.delay(email, msg)

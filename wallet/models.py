@@ -1,5 +1,6 @@
 from django.db import models
-from user.models import User, Categories
+
+from user.models import Categories, User
 
 
 class Organization(models.Model):

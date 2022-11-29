@@ -1,5 +1,6 @@
-from django.utils.functional import SimpleLazyObject
 from django.contrib.auth.middleware import AuthenticationMiddleware
+from django.utils.functional import SimpleLazyObject
+
 from user.services import AuthenticationService
 
 

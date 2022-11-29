@@ -1,13 +1,15 @@
-from rest_framework import viewsets, filters
-from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
-from wallet.permissions import IsOwnerOrAdmin
+from rest_framework import filters, viewsets
+from rest_framework.permissions import IsAuthenticated
+
 from user.models import User
 from wallet.models import Transaction
+from wallet.permissions import IsOwnerOrAdmin
 from wallet.serializers import TransactionSerializer
 
 
 class TransactionAPIViewset(viewsets.ModelViewSet):
+    """Transaction model viewset"""
     serializer_class = TransactionSerializer
     permission_classes = (IsAuthenticated, IsOwnerOrAdmin)
     filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
