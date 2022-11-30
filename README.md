@@ -83,7 +83,7 @@ ___
 - 2 Celery workers is used for collecting users daily stats and email notifications 
 - Flower is added to project for managing Celery tasks
 - Custom User model and manager
-- Authentication and authorization through JWT middleware 
+- Authentication and authorization through JWT middleware (token in headers)
 - Permissions
 - Filtering, searching, ordering available through query params
 - Pytest is used for testing (+fixtures in ./tests/conftest.py)
