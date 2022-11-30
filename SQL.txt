@@ -1,0 +1,16 @@
+1.
+SELECT b.title, count(*) AS "count"
+FROM notebooks_notebook AS n
+INNER JOIN notebooks_brand AS b
+ON n.brand_id = b.id
+GROUP BY b.title
+ORDER BY "count" DESC;
+
+2.
+SELECT (Ceiling(width::numeric / 5.0) *5) AS "width n",
+(Ceiling(depth::numeric / 5.0) *5) AS "depth n",
+(Ceiling(height::numeric / 5.0) *5) AS "height n",
+COUNT(*) AS "count n"
+FROM notebooks_notebook
+GROUP BY "width n", "depth n", "height n"
+ORDER BY "width n", "depth n", "height n";
