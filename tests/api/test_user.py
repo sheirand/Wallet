@@ -1,9 +1,10 @@
+import jwt
 import pytest
 from django.conf import settings
-from user.services import DEFAULT_CATEGORIES
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
-import jwt
+
+from user.services import DEFAULT_CATEGORIES
 
 
 @pytest.mark.django_db

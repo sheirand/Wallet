@@ -1,8 +1,10 @@
+import json
+
 import pytest
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
+
 from wallet.models import Transaction
-import json
 
 
 @pytest.mark.django_db

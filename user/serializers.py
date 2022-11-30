@@ -1,9 +1,8 @@
 from rest_framework import serializers
-from user.models import User, Categories
-from user.services import AuthenticationService, DEFAULT_CATEGORIES
 from rest_framework.validators import UniqueValidator
 
-from wallet.models import Transaction
+from user.models import Categories, User
+from user.services import DEFAULT_CATEGORIES, AuthenticationService
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -52,6 +51,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
 
 
 class LoginSerializer(serializers.ModelSerializer):
+    """Authorization and token obtain serializer"""
     email = serializers.EmailField(write_only=True, required=True)
     password = serializers.CharField(max_length=32, write_only=True, required=True)
     token = serializers.CharField(read_only=True, max_length=255)
@@ -77,6 +77,7 @@ class LoginSerializer(serializers.ModelSerializer):
 
 
 class ChangePwSerializer(serializers.ModelSerializer):
+    """Serializer for changing password"""
     email = serializers.EmailField(read_only=True)
     password = serializers.CharField(max_length=32, write_only=True, required=True)
 
@@ -86,6 +87,7 @@ class ChangePwSerializer(serializers.ModelSerializer):
 
 
 class UserStatsSerializer(serializers.Serializer):
+    """Serializer for simple user's stats"""
     category = serializers.CharField(source="category__name")
     count = serializers.IntegerField()
-    total = serializers.DecimalField(max_digits=15, decimal_places=2, source="sum", )
+    total = serializers.DecimalField(max_digits=15, decimal_places=2, source="sum")

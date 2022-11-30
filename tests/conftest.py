@@ -1,6 +1,6 @@
 import json
-import pytest
 
+import pytest
 from rest_framework.test import APIClient
 
 from user.models import User

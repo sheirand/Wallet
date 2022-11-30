@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from wallet.models import Transaction, Organization, Categories
+
 from user.models import User
+from wallet.models import Categories, Organization, Transaction
 
 
 class TransactionSerializer(serializers.ModelSerializer):
@@ -12,7 +13,16 @@ class TransactionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Transaction
-        fields = ('id', 'user', 'amount', 'time', 'category', 'organization', 'description', 'income')
+        fields = (
+            'id',
+            'user',
+            'amount',
+            'time',
+            'category',
+            'organization',
+            'description',
+            'income'
+        )
 
     def to_internal_value(self, data):
         org_name = data.get("organization")

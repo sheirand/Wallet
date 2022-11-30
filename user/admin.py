@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 from django.forms import ModelForm
 
-from user.models import User, Categories
+from user.models import Categories, User
 
 
 class UserCreationForm(ModelForm):
@@ -39,6 +39,14 @@ class CustomUserAdmin(UserAdmin):
     filter_horizontal = ()
 
 
+class CustomCategoryAdmin(admin.ModelAdmin):
+
+    list_display = ("id", "name")
+    ordering = ("id", "name")
+    search_fields = ("id", "name")
+    filter_horizontal = ()
+
+
 admin.site.register(User, CustomUserAdmin)
-admin.site.register(Categories)
+admin.site.register(Categories, CustomCategoryAdmin)
 admin.site.unregister(Group)
